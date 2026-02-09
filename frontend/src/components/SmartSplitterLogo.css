@@ -1,0 +1,106 @@
+.smart-splitter-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.smart-splitter-logo::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #FFD700, #25d366, #667eea, #FFD700);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  animation: rotate 3s linear infinite;
+}
+
+.smart-splitter-logo:hover::before {
+  opacity: 0.3;
+}
+
+.smart-splitter-logo:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.smart-splitter-logo svg {
+  filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.3));
+  transition: all 0.4s ease;
+}
+
+.smart-splitter-logo:hover svg {
+  filter: drop-shadow(0 8px 20px rgba(255, 215, 0, 0.4));
+}
+
+/* Rotating border animation */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Enhanced pulse animation for the split arrow */
+.smart-splitter-logo svg path[stroke="white"] {
+  animation: smartPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes smartPulse {
+  0%, 100% {
+    opacity: 0.9;
+    stroke-width: 2.5;
+  }
+  50% {
+    opacity: 1;
+    stroke-width: 3.5;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+  }
+}
+
+/* Glow effect for the center circle */
+.smart-splitter-logo svg circle[fill*="centerGradient"] {
+  animation: centerGlow 3s ease-in-out infinite;
+}
+
+@keyframes centerGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
+  }
+}
+
+/* Responsive sizing */
+.logo-small {
+  width: 32px;
+  height: 32px;
+}
+
+.logo-medium {
+  width: 48px;
+  height: 48px;
+}
+
+.logo-large {
+  width: 64px;
+  height: 64px;
+}
+
+/* Special hover effect for larger logos */
+.logo-large:hover {
+  transform: scale(1.15) rotate(8deg);
+}
+
+.logo-medium:hover {
+  transform: scale(1.12) rotate(6deg);
+}

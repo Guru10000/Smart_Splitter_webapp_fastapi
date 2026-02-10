@@ -7,7 +7,7 @@ from models import Group,Expense,User,expense_members,group_members, Settlement
 from .auth import get_current_user 
 from datetime import datetime
 from Schemas import ExpenseCreate
-from .chat import broadcast_bot_message
+from services.chat_services import broadcast_bot_message
 
 
 router = APIRouter(

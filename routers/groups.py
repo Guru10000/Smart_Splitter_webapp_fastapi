@@ -7,7 +7,7 @@ from .auth import get_current_user
 import secrets
 from datetime import datetime, timedelta
 from sqlalchemy import select
-from .chat import broadcast_bot_message
+from services.chat_services import broadcast_bot_message
 
 router = APIRouter(
     prefix="/groups",

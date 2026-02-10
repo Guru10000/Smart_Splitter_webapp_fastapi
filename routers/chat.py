@@ -39,40 +39,40 @@ async def broadcast(group_id: int, payload: dict):
         asyncio.create_task(_send_message(ws, payload))
 
 
-def broadcast_bot_message(group_id: int, content: str):
-    db = SessionLocal()
+# def broadcast_bot_message(group_id: int, content: str):
+#     db = SessionLocal()
 
 
-    msg = ChatMessage(
-        group_id=group_id,
-        sender_id=None,  # None for bot messages
-        sender_type="bot",
-        content=content,     
-        timestamp=datetime.utcnow()
-    )
+#     msg = ChatMessage(
+#         group_id=group_id,
+#         sender_id=None,  # None for bot messages
+#         sender_type="bot",
+#         content=content,     
+#         timestamp=datetime.utcnow()
+#     )
     
-    db.add(msg)
-    db.commit()
-    db.refresh(msg)
-    db.close()
+#     db.add(msg)
+#     db.commit()
+#     db.refresh(msg)
+#     db.close()
 
 
-    # if group_id in active_connections:
-    #     for ws in active_connections[group_id]:
-    #         asyncio.run(_send_message(ws, content))
+#     # if group_id in active_connections:
+#     #     for ws in active_connections[group_id]:
+#     #         asyncio.run(_send_message(ws, content))
 
-    # db.close()
+#     # db.close()
     
-    payload = {
-        "event": "bot_message",
-        "message": {
-            "id": msg.id,
-            "content": msg.content,
-            "timestamp": msg.timestamp.isoformat()
-        }
-    }
+#     payload = {
+#         "event": "bot_message",
+#         "message": {
+#             "id": msg.id,
+#             "content": msg.content,
+#             "timestamp": msg.timestamp.isoformat()
+#         }
+#     }
     
-    anyio.from_thread.run(broadcast, group_id, payload)
+#     anyio.from_thread.run(broadcast, group_id, payload)
 
 
 
@@ -146,31 +146,31 @@ async def websocket_endpoint(websocket: WebSocket, group_id: int):
 
         
         
-async def broadcast_expense_message(group_id: int, expense_id: int):
-    db = SessionLocal()
-    try:
-        expense = db.query(Expense).filter(Expense.id == expense_id).first()
-        if not expense:
-            return
+# async def broadcast_expense_message(group_id: int, expense_id: int):
+#     db = SessionLocal()
+#     try:
+#         expense = db.query(Expense).filter(Expense.id == expense_id).first()
+#         if not expense:
+#             return
 
-        involved_rows = db.execute(
-            expense_members.select()
-            .where(expense_members.c.expense_id == expense.id)
-        ).all()
+#         involved_rows = db.execute(
+#             expense_members.select()
+#             .where(expense_members.c.expense_id == expense.id)
+#         ).all()
 
-        involved_ids = [row.user_id for row in involved_rows]
-        users = db.query(User).filter(User.id.in_(involved_ids)).all()
-        name_list = ", ".join(u.name for u in users)
+#         involved_ids = [row.user_id for row in involved_rows]
+#         users = db.query(User).filter(User.id.in_(involved_ids)).all()
+#         name_list = ", ".join(u.name for u in users)
 
-        bot_msg = (
-            f"{expense.payer.name} added ₹{expense.amount} "
-            f"for {expense.note or 'expense'}\n"
-            f"Split between: {name_list}"
-        )
-    finally:
-        db.close()
+#         bot_msg = (
+#             f"{expense.payer.name} added ₹{expense.amount} "
+#             f"for {expense.note or 'expense'}\n"
+#             f"Split between: {name_list}"
+#         )
+#     finally:
+#         db.close()
 
-    broadcast_bot_message(group_id, bot_msg)
+#     broadcast_bot_message(group_id, bot_msg)
     
     
 async def broadcast_typing(group_id: int, user_name: str):

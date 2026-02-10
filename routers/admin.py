@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .auth import get_current_user, get_db
 from models import Settlement, User, Group, group_members
-from .chat import broadcast_bot_message
+from services.chat_services import broadcast_bot_message
 
 router = APIRouter(
     prefix="/admin",

@@ -29,13 +29,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router)
-app.include_router(chat.router)
-app.include_router(groups.router)
-app.include_router(expenses.router)
-app.include_router(admin.router)
-app.include_router(settlement.router)
-app.include_router(about.router)
+# app.include_router(auth.router)
+# app.include_router(chat.router)
+# app.include_router(groups.router)
+# app.include_router(expenses.router)
+# app.include_router(admin.router)
+# app.include_router(settlement.router)
+# app.include_router(about.router)
 
 @app.get("/")
 def root():

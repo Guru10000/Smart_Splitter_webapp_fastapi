@@ -2,7 +2,7 @@ from fastapi import APIRouter,Depends,HTTPException
 from models import User, Expense, Group, group_members,expense_members, Settlement
 from .auth import get_current_user, get_db
 from sqlalchemy.orm import Session
-from .chat import broadcast_bot_message
+from services.chat_services import broadcast_bot_message
 from fastapi import BackgroundTasks
 
 router = APIRouter(

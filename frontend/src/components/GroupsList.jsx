@@ -14,7 +14,6 @@ const GroupsList = () => {
   const [showJoinForm, setShowJoinForm] = useState(false);
   const [formData, setFormData] = useState({ name: '', description: '' });
   const [inviteLink, setInviteLink] = useState('');
-  const [showProfile, setShowProfile] = useState(false);
   const [creating, setCreating] = useState(false);
   const [joining, setJoining] = useState(false);
 
@@ -37,14 +36,7 @@ const GroupsList = () => {
     fetchData();
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await authAPI.logout();
-      window.location.href = '/';
-    } catch (error) {
-      window.location.href = '/';
-    }
-  };
+  
 
   const handleCreateGroup = async (e) => {
     e.preventDefault();

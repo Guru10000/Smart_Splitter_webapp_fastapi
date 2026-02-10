@@ -16,12 +16,17 @@ load_dotenv()
 frontend_url = os.getenv("FRONTEND_URL")
 prod_frontend_url = os.getenv("PROD_FRONTEND_URL")
 
+origins = [frontend_url]
+
+if prod_frontend_url:
+    origins.append(prod_frontend_url)
+
 app.add_middleware(
-    CORSMiddleware,[frontend_url, prod_frontend_url],  # Allow all origins for development
+    CORSMiddleware,
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods
+    allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"]
 )
 
 app.include_router(auth.router)

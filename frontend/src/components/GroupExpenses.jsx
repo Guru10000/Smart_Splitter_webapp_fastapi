@@ -13,6 +13,7 @@ const GroupExpenses = () => {
   const [showExpenseDetail, setShowExpenseDetail] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+
   const fetchExpenses = useCallback(async () => {
   try {
     setLoading(true);
@@ -40,9 +41,10 @@ const GroupExpenses = () => {
   }
 }, [groupId, navigate]);
 
+
   useEffect(() => {
     fetchExpenses();
-  }, [groupId, navigate, refreshTrigger]);
+  }, [fetchExpenses, refreshTrigger]);
 
   // Auto-refresh when navigating back from AddExpense (componentDidMount style)
   useEffect(() => {

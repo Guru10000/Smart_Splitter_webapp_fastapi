@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { authAPI, chatAPI, groupAPI } from '../services/api';
 import './GroupChat.css';
@@ -12,7 +12,7 @@ const GroupChat = () => {
   const [groupData, setGroupData] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [typingUser, setTypingUser] = useState('');
-  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [autoRefresh] = useState(true);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const messagesEndRef = useRef(null);
   const chatMessagesRef = useRef(null);
@@ -96,31 +96,27 @@ const GroupChat = () => {
 
 
 
-  const connectWebSocket = () => {
-    if (!groupId) {
-      console.warn('Cannot connect WebSocket: groupId not available');
-      return;
+  const connectWebSocket = useCallback(() => {
+  if (!groupId) return;
+
+  if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+    return;
+  }
+
+  const wsUrl = `ws://localhost:8000/chat/ws/${groupId}`;
+  const ws = new WebSocket(wsUrl);
+  wsRef.current = ws;
+
+  ws.onopen = () => {
+    setIsConnected(true);
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
     }
+  };
 
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      return; // Already connected
-    }
-
-    const wsUrl = `ws://localhost:8000/chat/ws/${groupId}`;
-    const ws = new WebSocket(wsUrl);
-    wsRef.current = ws;
-
-    ws.onopen = () => {
-      setIsConnected(true);
-      // Clear any pending reconnect timeout
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-        reconnectTimeoutRef.current = null;
-      }
-    };
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
 
       if (data.event === 'message') {
         const serverMsg = {
@@ -163,17 +159,18 @@ const GroupChat = () => {
     };
 
     ws.onerror = (err) => {
-      console.error('WebSocket error:', err);
-    };
-
-    ws.onclose = () => {
-      setIsConnected(false);
-      // Attempt to reconnect after 3 seconds
-      reconnectTimeoutRef.current = setTimeout(() => {
-        connectWebSocket();
-      }, 3000);
-    };
+    console.error('WebSocket error:', err);
   };
+
+  ws.onclose = () => {
+    setIsConnected(false);
+    reconnectTimeoutRef.current = setTimeout(() => {
+      connectWebSocket();
+    }, 3000);
+  };
+}, [groupId]);
+
+
 
   useEffect(() => {
     connectWebSocket();
@@ -186,7 +183,7 @@ const GroupChat = () => {
         clearTimeout(reconnectTimeoutRef.current);
       }
     };
-  }, [groupId]);
+  }, [connectWebSocket]);
 
 
 

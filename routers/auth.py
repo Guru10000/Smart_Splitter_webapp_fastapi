@@ -135,8 +135,8 @@ def Login(
         key="access_token",
         value=token,
         httponly=True,
-        samesite="lax",
-        secure=False
+        samesite="none",   # VERY IMPORTANT
+        secure=True        # VERY IMPORTANT (must be True with samesite none)
     )
     
     return {"message": "login successfully"}

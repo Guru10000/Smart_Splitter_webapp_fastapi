@@ -12,7 +12,6 @@ const Settlements = () => {
   const [groupData, setGroupData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [settling, setSettling] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
   const [showPendingSettlements, setShowPendingSettlements] = useState(false);
 
   useEffect(() => {

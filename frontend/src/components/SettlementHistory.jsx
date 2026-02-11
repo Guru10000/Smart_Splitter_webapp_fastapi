@@ -6,6 +6,7 @@ import './SettlementHistory.css';
 const SettlementHistory = () => {
   const { groupId } = useParams();
   const navigate = useNavigate();
+
   const [settlements, setSettlements] = useState([]);
   const [groupData, setGroupData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,12 +20,15 @@ const SettlementHistory = () => {
           groupAPI.getGroup(groupId),
           groupAPI.getSettlementHistory(groupId)
         ]);
+
         setGroupData(groupResponse.data);
         setSettlements(settlementsResponse.data);
-        
+
         // Get current user role
         const currentUser = await authAPI.getMe();
-        const userRole = groupResponse.data.members.find(m => m.id === currentUser.data.id)?.role;
+        const userRole = groupResponse.data.members.find(
+          (m) => m.id === currentUser.data.id
+        )?.role;
         setCurrentUserRole(userRole);
       } catch (error) {
         console.error('Failed to load settlement history:', error);
@@ -33,6 +37,7 @@ const SettlementHistory = () => {
         setLoading(false);
       }
     };
+
     fetchData();
   }, [groupId, navigate]);
 
@@ -40,6 +45,7 @@ const SettlementHistory = () => {
     setUndoingSettlement(settlementId);
     try {
       await groupAPI.undoSettlement(settlementId);
+
       // Refresh settlement history
       const settlementsResponse = await groupAPI.getSettlementHistory(groupId);
       setSettlements(settlementsResponse.data);
@@ -66,13 +72,18 @@ const SettlementHistory = () => {
 
   return (
     <div className="settlement-history">
+      {/* Header */}
       <div className="history-header">
-        <button onClick={() => navigate(`/groups/${groupId}/settlements`)} className="back-btn">
+        <button
+          onClick={() => navigate(`/groups/${groupId}/settlements`)}
+          className="back-btn"
+        >
           ←
         </button>
         <h1>{groupData?.group?.name} Settlement History</h1>
       </div>
 
+      {/* Content */}
       <div className="history-content">
         {settlements.length === 0 ? (
           <div className="empty-history">
@@ -83,28 +94,31 @@ const SettlementHistory = () => {
         ) : (
           <div className="settlements-list">
             {settlements.map((settlement) => (
-              <div key={settlement.id} className={`settlement-card ${settlement.paid ? 'paid' : 'pending'}`}>
+              <div
+                key={settlement.id}
+                className={`settlement-card ${settlement.paid ? 'paid' : 'pending'}`}
+              >
                 <div className={`status-badge ${settlement.paid ? 'paid' : 'pending'}`}>
                   {settlement.paid ? 'PAID' : 'PENDING'}
                 </div>
-                
+
                 <div className="settlement-content">
+                  {/* Payer → Receiver */}
                   <div className="settlement-text">
                     <span className="payer-name">{settlement.from?.name}</span>
                     <span className="arrow-text">→</span>
                     <span className="receiver-name">{settlement.to?.name}</span>
                   </div>
-                  
+
+                  {/* Footer: Amount, Date, Undo Button */}
                   <div className="settlement-footer">
                     <div className="settlement-details">
                       <div className="amount">₹{settlement.amount}</div>
-                      <div className="settlement-date">
-                        {formatDate(settlement.date)}
-                      </div>
+                      <div className="settlement-date">{formatDate(settlement.date)}</div>
                     </div>
-                    
+
                     {currentUserRole === 'admin' && settlement.paid && (
-                      <button 
+                      <button
                         onClick={() => handleUndoSettlement(settlement.id)}
                         disabled={undoingSettlement === settlement.id}
                         className="undo-btn"
@@ -115,7 +129,7 @@ const SettlementHistory = () => {
                   </div>
                 </div>
               </div>
-            ))}}
+            ))}
           </div>
         )}
       </div>

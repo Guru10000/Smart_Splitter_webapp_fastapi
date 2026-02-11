@@ -13,7 +13,6 @@ const GroupChat = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [typingUser, setTypingUser] = useState('');
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [lastMessageId, setLastMessageId] = useState(0);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const messagesEndRef = useRef(null);
   const chatMessagesRef = useRef(null);

@@ -103,7 +103,7 @@ const GroupChat = () => {
     return;
   }
 
-  const wsUrl = `ws://localhost:8000/chat/ws/${groupId}`;
+  const wsUrl = `wss://smart-splitter-webapp-fastapi.onrender.com/chat/ws/${groupId}`;
   const ws = new WebSocket(wsUrl);
   wsRef.current = ws;
 

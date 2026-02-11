@@ -3,12 +3,21 @@ from fastapi import APIRouter, WebSocket, Depends, HTTPException, WebSocketDisco
 from starlette import status
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import ChatMessage, User, Expense, expense_members, chat_read_receipts
+from models import ChatMessage, User, expense_members, chat_read_receipts
 from datetime import datetime
 import asyncio
 import json
-from .auth import get_current_user
-import anyio
+from .auth import get_current_user, ALGORITHM
+from fastapi import Query
+from jose import jwt, JWTError
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 router = APIRouter(
     prefix="/chat",
@@ -39,46 +48,28 @@ async def broadcast(group_id: int, payload: dict):
         asyncio.create_task(_send_message(ws, payload))
 
 
-# def broadcast_bot_message(group_id: int, content: str):
-#     db = SessionLocal()
-
-
-#     msg = ChatMessage(
-#         group_id=group_id,
-#         sender_id=None,  # None for bot messages
-#         sender_type="bot",
-#         content=content,     
-#         timestamp=datetime.utcnow()
-#     )
-    
-#     db.add(msg)
-#     db.commit()
-#     db.refresh(msg)
-#     db.close()
-
-
-#     # if group_id in active_connections:
-#     #     for ws in active_connections[group_id]:
-#     #         asyncio.run(_send_message(ws, content))
-
-#     # db.close()
-    
-#     payload = {
-#         "event": "bot_message",
-#         "message": {
-#             "id": msg.id,
-#             "content": msg.content,
-#             "timestamp": msg.timestamp.isoformat()
-#         }
-#     }
-    
-#     anyio.from_thread.run(broadcast, group_id, payload)
 
 
 
 
 @router.websocket("/ws/{group_id}")
-async def websocket_endpoint(websocket: WebSocket, group_id: int):
+async def websocket_endpoint(websocket: WebSocket, group_id: int, token: str = Query(None)):
+    
+    if not token:
+        await websocket.close(code=1008)
+        return
+    
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("sub")
+        if not user_id:
+            await websocket.close(code=1008)
+            return
+        
+    except JWTError:
+        await websocket.close(code=1008)
+        return
+    
 
     await websocket.accept()
     active_connections.setdefault(group_id, []).append(websocket)

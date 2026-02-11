@@ -103,7 +103,10 @@ const GroupChat = () => {
     return;
   }
 
+
+  const token = document.cookie.split('; ').find(row => row.startsWith('access_token='))?.split('=')[1];
   const wsUrl = `wss://smart-splitter-webapp-fastapi.onrender.com/chat/ws/${groupId}`;
+
   const ws = new WebSocket(wsUrl);
   wsRef.current = ws;
 

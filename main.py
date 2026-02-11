@@ -13,13 +13,10 @@ app = FastAPI()
 
 load_dotenv()
 
-frontend_url = os.getenv("FRONTEND_URL")
 prod_frontend_url = os.getenv("PROD_FRONTEND_URL")
 
-origins = [frontend_url]
+origins = [prod_frontend_url]
 
-if prod_frontend_url:
-    origins.append(prod_frontend_url)
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,6 +25,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+
+
 
 app.include_router(auth.router)
 app.include_router(chat.router)

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { groupAPI } from '../services/api';
 import './GroupExpenses.css';
@@ -13,35 +13,32 @@ const GroupExpenses = () => {
   const [showExpenseDetail, setShowExpenseDetail] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const fetchExpenses = async () => {
-    try {
-      setLoading(true);
-      const [groupResponse, expensesResponse] = await Promise.all([
-        groupAPI.getGroup(groupId),
-        groupAPI.getExpenses(groupId)
-      ]);
-      setGroupData(groupResponse.data);
-      setExpenses(expensesResponse.data || []);
-    } catch (error) {
-      console.error('Failed to load data:', error);
-      // Only redirect if the group itself doesn't exist
-      if (error.response?.status === 404) {
+  const fetchExpenses = useCallback(async () => {
+  try {
+    setLoading(true);
+    const [groupResponse, expensesResponse] = await Promise.all([
+      groupAPI.getGroup(groupId),
+      groupAPI.getExpenses(groupId)
+    ]);
+    setGroupData(groupResponse.data);
+    setExpenses(expensesResponse.data || []);
+  } catch (error) {
+    console.error('Failed to load data:', error);
+    if (error.response?.status === 404) {
+      navigate(`/groups/${groupId}`);
+    } else {
+      try {
+        const groupResponse = await groupAPI.getGroup(groupId);
+        setGroupData(groupResponse.data);
+        setExpenses([]);
+      } catch {
         navigate(`/groups/${groupId}`);
-      } else {
-        // Still show the expenses page even if there's an error loading expenses
-        // Try to at least load the group data
-        try {
-          const groupResponse = await groupAPI.getGroup(groupId);
-          setGroupData(groupResponse.data);
-          setExpenses([]);
-        } catch {
-          navigate(`/groups/${groupId}`);
-        }
       }
-    } finally {
-      setLoading(false);
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+}, [groupId, navigate]);
 
   useEffect(() => {
     fetchExpenses();

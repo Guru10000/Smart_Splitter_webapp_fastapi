@@ -9,7 +9,6 @@ const GroupsList = () => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showJoinForm, setShowJoinForm] = useState(false);
   const [formData, setFormData] = useState({ name: '', description: '' });
@@ -20,11 +19,10 @@ const GroupsList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [userResponse, groupsResponse] = await Promise.all([
+        const [ , groupsResponse] = await Promise.all([
           authAPI.getMe(),
           groupAPI.getMyGroups()
         ]);
-        setUser(userResponse.data);
         setGroups(groupsResponse.data);
       } catch (error) {
         window.location.href = '/';

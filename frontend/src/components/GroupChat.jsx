@@ -260,20 +260,46 @@ const GroupChat = () => {
       </div>
 
       <div className="chat-messages" ref={chatMessagesRef}>
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`message ${
-              message.type === "bot"
-                ? "bot-message"
-                : message.sender_id === currentUser?.id
-                ? "own-message"
-                : "other-message"
-            }`}
-          >
-            <div className="message-text">{message.content}</div>
-          </div>
-        ))}
+        {messages.map((message) => {
+          const isOwn = message.sender_id === currentUser?.id;
+
+          return (
+            <div
+              key={message.id}
+              className={`message ${
+                message.type === "bot"
+                  ? "bot-message"
+                  : isOwn
+                  ? "own-message"
+                  : "other-message"
+              }`}
+            >
+              {message.type === "bot" ? (
+                <div className="bot-content">
+                  <div className="bot-icon">🤖</div>
+                  <div>
+                    <div className="message-text">{message.content}</div>
+                    <div className="message-time">
+                      {new Date(message.timestamp).toLocaleTimeString()}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="user-content">
+                  {!isOwn && (
+                    <div className="sender-name">{message.sender_name}</div>
+                  )}
+
+                  <div className="message-text">{message.content}</div>
+
+                  <div className="message-time">
+                    {new Date(message.timestamp).toLocaleTimeString()}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
 
         {typingUser && typingUser !== currentUser?.name && (
           <div className="typing-indicator">

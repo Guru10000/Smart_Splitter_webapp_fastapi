@@ -97,7 +97,14 @@ const GroupChat = () => {
 
     let baseUrl = process.env.REACT_APP_API_BASE_URL;
 
-    baseUrl = baseUrl.replace(/^http/, "ws")
+    if(!baseUrl){
+      console.error("API base url not found")
+      return
+    }
+
+    const wsBaseUrl = baseUrl.startsWith("https")
+      ? baseUrl.replace("https", "wss")
+      : baseUrl.replace("http", "ws");
 
     const wsUrl = `${baseUrl}/chat/ws/${groupId}?token=${token}`;
     

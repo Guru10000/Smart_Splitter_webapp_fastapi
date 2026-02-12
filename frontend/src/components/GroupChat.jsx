@@ -89,16 +89,23 @@ const GroupChat = () => {
   const connectWebSocket = useCallback(() => {
     if (!groupId) return;
 
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      return;
-    }
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN)return;
 
-    const wsUrl = `wss://smart-splitter-webapp-fastapi.onrender.com/chat/ws/${groupId}`;
+    const token = localStorage.getItem("token");
 
+    if(!token) return;
+
+    let baseUrl = Process.env.REACT_APP_API_BASE_URL;
+
+    baseUrl = baseUrl.replace(/^http/, "ws")
+
+    const wsUrl = `${baseUrl}/chat/ws/${groupId}?token=${token}`;
+    
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     ws.onopen = () => {
+      console.log("WebSocket connected")
       setIsConnected(true);
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
@@ -159,6 +166,8 @@ const GroupChat = () => {
       }, 3000);
     };
   }, [groupId]);
+
+  
 
   useEffect(() => {
     connectWebSocket();

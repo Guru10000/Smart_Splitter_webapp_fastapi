@@ -348,10 +348,12 @@
   
   .profile-actions {
     flex-direction: column;
+    width: 100%;
   }
   
   .primary-btn,
   .logout-btn {
-    max-width: none;
+    max-width: 100%;
+    width: 100%;
   }
 }

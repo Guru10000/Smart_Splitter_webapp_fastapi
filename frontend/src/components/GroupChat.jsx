@@ -106,7 +106,7 @@ const GroupChat = () => {
       ? baseUrl.replace("https", "wss")
       : baseUrl.replace("http", "ws");
 
-    const wsUrl = `${baseUrl}/chat/ws/${groupId}?token=${token}`;
+    const wsUrl = `${wsBaseUrl}/chat/ws/${groupId}?token=${token}`;
     
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;

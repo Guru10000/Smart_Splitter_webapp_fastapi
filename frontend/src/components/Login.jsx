@@ -56,7 +56,11 @@ const Login = () => {
     setError('');
 
     try {
-      await authAPI.login(formData);
+      const response = await authAPI.login(formData);
+
+      localStorage.setItem('token', response.data.access_token);
+
+
       window.location.href = '/groups';
     } catch (err) {
       setError(err.response?.data?.detail || 'Login failed');

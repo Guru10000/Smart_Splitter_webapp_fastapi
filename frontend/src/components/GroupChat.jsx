@@ -167,17 +167,6 @@ const GroupChat = () => {
     ws.onerror = (err) => {
       console.error("WebSocket error:", err);
     };
-
-    // ws.onclose = () => {
-    //   setIsConnected(false);
-    //   reconnectTimeoutRef.current = setTimeout(() => {
-    //     connectWebSocket();
-    //   }, 3000);
-    // };
-    ws.onclose = (event) => {
-      console.log("WebSocket closed with code:", event.code);
-      console.log("Reason:", event.reason);
-    };
   }, [groupId]);
 
 

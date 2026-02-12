@@ -139,7 +139,11 @@ def Login(
         secure=True        # VERY IMPORTANT (must be True with samesite none)
     )
     
-    return {"message": "login successfully"}
+    return {
+        "message": "login successfully",
+        "access_token": token,
+        "token_type": "bearer"
+    }
 
 
 def get_current_user(request: Request, db: Session=Depends(get_db)):

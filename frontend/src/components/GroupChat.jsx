@@ -113,6 +113,8 @@ const GroupChat = () => {
 
     ws.onopen = () => {
       console.log("WebSocket connected")
+      
+
       setIsConnected(true);
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
@@ -166,11 +168,15 @@ const GroupChat = () => {
       console.error("WebSocket error:", err);
     };
 
-    ws.onclose = () => {
-      setIsConnected(false);
-      reconnectTimeoutRef.current = setTimeout(() => {
-        connectWebSocket();
-      }, 3000);
+    // ws.onclose = () => {
+    //   setIsConnected(false);
+    //   reconnectTimeoutRef.current = setTimeout(() => {
+    //     connectWebSocket();
+    //   }, 3000);
+    // };
+    ws.onclose = (event) => {
+      console.log("WebSocket closed with code:", event.code);
+      console.log("Reason:", event.reason);
     };
   }, [groupId]);
 

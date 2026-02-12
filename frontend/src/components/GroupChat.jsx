@@ -95,7 +95,7 @@ const GroupChat = () => {
 
     if(!token) return;
 
-    let baseUrl = Process.env.REACT_APP_API_BASE_URL;
+    let baseUrl = process.env.REACT_APP_API_BASE_URL;
 
     baseUrl = baseUrl.replace(/^http/, "ws")
 
@@ -167,7 +167,7 @@ const GroupChat = () => {
     };
   }, [groupId]);
 
-  
+
 
   useEffect(() => {
     connectWebSocket();

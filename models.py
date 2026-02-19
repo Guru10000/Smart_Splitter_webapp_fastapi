@@ -8,23 +8,23 @@ from datetime import datetime
 group_members = Table(
     "group_members",
     Base.metadata,
-    Column("group_id", Integer, ForeignKey("groups.id"), primary_key=True),
-    Column("user_id", Integer, ForeignKey("users.id"),primary_key=True),
+    Column("group_id", Integer, ForeignKey("groups.id", ondelete="CASCADE"), primary_key=True),
+    Column("user_id", Integer, ForeignKey("users.id", ondelete="CASCADE"),primary_key=True),
     Column("role", String, default="member")   
 )
 
 expense_members = Table(
     "expense_members",
     Base.metadata,
-    Column("expense_id", Integer, ForeignKey("expenses.id"), primary_key=True),
-    Column("user_id", Integer, ForeignKey("users.id"),primary_key=True)
+    Column("expense_id", Integer, ForeignKey("expenses.id", ondelete="CASCADE"), primary_key=True),
+    Column("user_id", Integer, ForeignKey("users.id", ondelete="CASCADE"),primary_key=True)
 )
 
 chat_read_receipts = Table(
     "chat_read_recipts",
     Base.metadata,
-    Column("message_id", Integer, ForeignKey("chat_messages.id"), primary_key=True),
-    Column("user_id", Integer, ForeignKey("users.id"),primary_key=True)
+    Column("message_id", Integer, ForeignKey("chat_messages.id", ondelete="CASCADE"), primary_key=True),
+    Column("user_id", Integer, ForeignKey("users.id", ondelete="CASCADE"),primary_key=True)
 )
 
 
@@ -60,7 +60,8 @@ class Group(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
-    created_by = Column(Integer, ForeignKey("users.id"))
+    created_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+
     
     members = relationship("User", secondary=group_members, back_populates="groups")
     expenses = relationship("Expense", back_populates="group")
@@ -73,8 +74,9 @@ class Expense(Base):
     __tablename__ = "expenses"
     
     id = Column(Integer, primary_key=True, index=True)
-    group_id =Column(Integer, ForeignKey("groups.id"))
-    paid_by = Column(Integer, ForeignKey("users.id"))
+    group_id =Column(Integer, ForeignKey("groups.id", ondelete="CASCADE"))
+    paid_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+
     amount = Column(Float, nullable=False)
     note = Column(String)
     date = Column(DateTime, default=datetime.utcnow)
@@ -89,8 +91,8 @@ class ChatMessage(Base):
     __tablename__ = "chat_messages"
     
     id = Column(Integer, primary_key=True, index=True)
-    group_id = Column(Integer, ForeignKey("groups.id"))
-    sender_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    group_id = Column(Integer, ForeignKey("groups.id", ondelete="CASCADE"))
+    sender_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     sender_type = Column(String, default="user")  # 'user' or 'bot'
     content = Column(String, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
@@ -105,10 +107,10 @@ class GroupInvite(Base):
     __tablename__ = "group_invites"
     
     id = Column(Integer, primary_key=True)
-    group_id = Column(Integer, ForeignKey("groups.id"))
+    group_id = Column(Integer, ForeignKey("groups.id", ondelete="CASCADE"))
     token = Column(String, unique=True, index=True)
     expires_at = Column(DateTime)
-    created_by = Column(Integer, ForeignKey("users.id"))
+    created_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"))
     used = Column(Boolean, default=False)
     
     
@@ -116,9 +118,9 @@ class Settlement(Base):
     __tablename__ = "settlements"
     
     id = Column(Integer, primary_key=True)
-    group_id = Column(Integer, ForeignKey("groups.id"))
-    payer_id = Column(Integer, ForeignKey("users.id"))
-    receiver_id = Column(Integer, ForeignKey("users.id"))
+    group_id = Column(Integer, ForeignKey("groups.id", ondelete="CASCADE"))
+    payer_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
+    receiver_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     amount = Column(Float, nullable=False)
     settled_at = Column(DateTime, default=datetime.utcnow())
     is_paid = Column(Boolean, default=False)

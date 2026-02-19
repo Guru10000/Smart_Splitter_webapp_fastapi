@@ -135,33 +135,6 @@ async def websocket_endpoint(websocket: WebSocket, group_id: int, token: str = Q
         if group_id in active_connections and websocket in active_connections[group_id]:
             active_connections[group_id].remove(websocket)
 
-        
-        
-# async def broadcast_expense_message(group_id: int, expense_id: int):
-#     db = SessionLocal()
-#     try:
-#         expense = db.query(Expense).filter(Expense.id == expense_id).first()
-#         if not expense:
-#             return
-
-#         involved_rows = db.execute(
-#             expense_members.select()
-#             .where(expense_members.c.expense_id == expense.id)
-#         ).all()
-
-#         involved_ids = [row.user_id for row in involved_rows]
-#         users = db.query(User).filter(User.id.in_(involved_ids)).all()
-#         name_list = ", ".join(u.name for u in users)
-
-#         bot_msg = (
-#             f"{expense.payer.name} added ₹{expense.amount} "
-#             f"for {expense.note or 'expense'}\n"
-#             f"Split between: {name_list}"
-#         )
-#     finally:
-#         db.close()
-
-#     broadcast_bot_message(group_id, bot_msg)
     
     
 async def broadcast_typing(group_id: int, user_name: str):

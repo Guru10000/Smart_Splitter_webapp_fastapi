@@ -216,6 +216,9 @@ const GroupChat = () => {
     }
   }, [messages, isUserScrolling]);
 
+
+
+
   const sendMessage = () => {
     if (!newMessage.trim() || !currentUser) return;
 
@@ -230,6 +233,8 @@ const GroupChat = () => {
       setNewMessage("");
     }
   };
+
+  
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {

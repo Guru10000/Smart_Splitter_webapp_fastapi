@@ -231,13 +231,24 @@ const GroupChat = () => {
   };
 
   // Helper to format timestamp in IST
-  const formatIST = (timestamp) =>
-    new Date(timestamp).toLocaleTimeString("en-IN", {
+  const formatIST = (timestamp) =>{
+    let utcTimestamp = timestamp;
+
+    if (!timestamp.endsWith("Z")) {
+      utcTimestamp = timestamp + "Z";
+    }
+
+    const utcDate = new Date(utcTimestamp);
+
+
+    return utcDate.toLocaleTimeString("en-IN", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
       timeZone: "Asia/Kolkata",
     });
+
+  };
 
   return (
     <div className="group-chat">

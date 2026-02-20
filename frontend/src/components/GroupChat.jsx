@@ -89,17 +89,15 @@ const GroupChat = () => {
   const connectWebSocket = useCallback(() => {
     if (!groupId) return;
 
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN)return;
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) return;
 
     const token = localStorage.getItem("token");
-
-    if(!token) return;
+    if (!token) return;
 
     let baseUrl = process.env.REACT_APP_API_BASE_URL;
-
-    if(!baseUrl){
-      console.error("API base url not found")
-      return
+    if (!baseUrl) {
+      console.error("API base url not found");
+      return;
     }
 
     const wsBaseUrl = baseUrl.startsWith("https")
@@ -107,14 +105,11 @@ const GroupChat = () => {
       : baseUrl.replace("http", "ws");
 
     const wsUrl = `${wsBaseUrl}/chat/ws/${groupId}?token=${token}`;
-    
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     ws.onopen = () => {
-      console.log("WebSocket connected")
-      
-
+      console.log("WebSocket connected");
       setIsConnected(true);
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
@@ -169,8 +164,6 @@ const GroupChat = () => {
     };
   }, [groupId]);
 
-
-
   useEffect(() => {
     connectWebSocket();
 
@@ -192,8 +185,7 @@ const GroupChat = () => {
   useEffect(() => {
     const handleScroll = () => {
       if (!chatMessagesRef.current) return;
-      const { scrollTop, scrollHeight, clientHeight } =
-        chatMessagesRef.current;
+      const { scrollTop, scrollHeight, clientHeight } = chatMessagesRef.current;
       const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
       setIsUserScrolling(!isAtBottom);
     };
@@ -216,9 +208,6 @@ const GroupChat = () => {
     }
   }, [messages, isUserScrolling]);
 
-
-
-
   const sendMessage = () => {
     if (!newMessage.trim() || !currentUser) return;
 
@@ -234,8 +223,6 @@ const GroupChat = () => {
     }
   };
 
-  
-
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -243,23 +230,25 @@ const GroupChat = () => {
     }
   };
 
+  // Helper to format timestamp in IST
+  const formatIST = (timestamp) =>
+    new Date(timestamp).toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "Asia/Kolkata",
+    });
+
   return (
     <div className="group-chat">
       <div className="chat-header">
-        <button
-          onClick={() => navigate(`/groups/${groupId}`)}
-          className="back-btn"
-        >
+        <button onClick={() => navigate(`/groups/${groupId}`)} className="back-btn">
           ←
         </button>
 
         <h1>{groupData?.group?.name || "Group Chat"}</h1>
 
-        <div
-          className={`connection-status ${
-            isConnected ? "connected" : "disconnected"
-          }`}
-        >
+        <div className={`connection-status ${isConnected ? "connected" : "disconnected"}`}>
           {isConnected ? "🟢" : "🔴"}
         </div>
       </div>
@@ -284,22 +273,16 @@ const GroupChat = () => {
                   <div className="bot-icon">🤖</div>
                   <div>
                     <div className="message-text">{message.content}</div>
-                    <div className="message-time">
-                      {new Date(message.timestamp).toLocaleTimeString()}
-                    </div>
+                    <div className="message-time">{formatIST(message.timestamp)}</div>
                   </div>
                 </div>
               ) : (
                 <div className="user-content">
-                  {!isOwn && (
-                    <div className="sender-name">{message.sender_name}</div>
-                  )}
+                  {!isOwn && <div className="sender-name">{message.sender_name}</div>}
 
                   <div className="message-text">{message.content}</div>
 
-                  <div className="message-time">
-                    {new Date(message.timestamp).toLocaleTimeString()}
-                  </div>
+                  <div className="message-time">{formatIST(message.timestamp)}</div>
                 </div>
               )}
             </div>
@@ -307,9 +290,7 @@ const GroupChat = () => {
         })}
 
         {typingUser && typingUser !== currentUser?.name && (
-          <div className="typing-indicator">
-            {typingUser} is typing...
-          </div>
+          <div className="typing-indicator">{typingUser} is typing...</div>
         )}
 
         <div ref={messagesEndRef} />
@@ -319,18 +300,12 @@ const GroupChat = () => {
         <div className="input-container">
           <textarea
             value={newMessage}
-            onChange={(e) => {
-              setNewMessage(e.target.value);
-            }}
+            onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="Type a message..."
             rows="1"
           />
-          <button
-            onClick={sendMessage}
-            disabled={!newMessage.trim()}
-            className="send-btn"
-          >
+          <button onClick={sendMessage} disabled={!newMessage.trim()} className="send-btn">
             📤
           </button>
         </div>

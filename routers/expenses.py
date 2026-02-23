@@ -121,7 +121,7 @@ def list_expenses(
             "amount": e.amount,
             "note": e.note,
             "paid_by": e.paid_by,
-            "date": e.date,
+            "date": e.date.astimezone(ZoneInfo("Asia/Kolkata")) if e.date else None,
             "payer_name": e.payer.name if e.payer else "Unknown",
             "involved_users": [
                 {

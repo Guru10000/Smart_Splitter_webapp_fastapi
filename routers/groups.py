@@ -93,7 +93,7 @@ def add_member(group_id: int,
     db.commit()
     
     broadcast_bot_message(
-        group_id, f"🚪 {user.name} joined the group"
+        group_id, f" {user.name} joined the group"
     )
     
     return {"message": f"{user.name} added to the group"}
